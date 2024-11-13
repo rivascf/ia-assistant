@@ -1,0 +1,16 @@
+F5TTS[12-112024 13:07:08]: elapsed: 21.82 seg, req_elapsed: 14.91 seg 
+   output: (C:\Users\aarusr02\AppData\Local\Temp\gradio\112238a45f4728ac9b7f4634a7dce92518a1fa94faf55f80f10f0c8eb265b46d\audio.wav, C:\Users\aarusr02\AppData\Local\Temp\gradio\11df1d0ffb937323a1afdb0dfec4ff4e5ecdd15d7ede59667f5082127fdcfcca\tmph75u11u4.png).
+F5TTS[12-112024 21:24:46]: elapsed: 13.30 seg, req_elapsed: 6.58 seg 
+   output: (C:\Users\aarusr02\AppData\Local\Temp\gradio\5cf85bc4dc90b4bfe25674a9aba6363151f98d525f30ffbd4496c7acfcf6c479\audio.wav, C:\Users\aarusr02\AppData\Local\Temp\gradio\e88ad7780461c2ccc1d9cc620135d29590b7bfbdc4cdb6185723678ae4e564b7\tmppg0iglm2.png).
+F5TTS[12-112024 21:33:51]: elapsed: 264.11 seg, req_elapsed: 79.75 seg 
+   output: (C:\Users\aarusr02\AppData\Local\Temp\gradio\bb4ad5967f3885a11dd3887f8b659038fea5d11246ff50e39e8c10f6e4632b55\audio.wav, C:\Users\aarusr02\AppData\Local\Temp\gradio\c428b320e902f4fe81f35aa0de31756635f1ef6ccf75b6b40c880b301b3b5324\tmp3jh0h72r.png).
+F5TTS[12-112024 21:45:05]: elapsed: 49.26 seg, req_elapsed: 17.88 seg 
+   output: (C:\Users\aarusr02\AppData\Local\Temp\gradio\ef9006036087c9b17d62b1bb92bb46662272c6ea5e6fbc3b7590ebe82d928d21\audio.wav, C:\Users\aarusr02\AppData\Local\Temp\gradio\0feda981a39a07bb0364bdd095ca16dbe908ee7d648f645f90f19d4414c11975\tmphv3rbiwu.png).
+F5TTS[12-112024 21:46:32]: elapsed: 56.79 seg, req_elapsed: 18.95 seg 
+   output: (C:\Users\aarusr02\AppData\Local\Temp\gradio\0822b28187fcafee402f819d390fb3aa7ef51bc6bddf1598ed8952607550d2bb\audio.wav, C:\Users\aarusr02\AppData\Local\Temp\gradio\76c1596cb1c61d82da33c17d7e70fd20c09366fd6e67e1dfae1e4f5eec779e6d\tmp473tep8w.png).
+F5TTS[12-112024 21:47:37]: elapsed: 60.39 seg, req_elapsed: 19.91 seg 
+   output: (C:\Users\aarusr02\AppData\Local\Temp\gradio\0ecb66a22370e1ad32ffb5668d9abb3d3b957cb084102342054a4f5977874b60\audio.wav, C:\Users\aarusr02\AppData\Local\Temp\gradio\02cbbbb7c97879f81c067ec48dd9a05d0e2e66f3b9124c615161bd915f040abf\tmp6s4_98o2.png).
+F5TTS[12-112024 21:48:38]: elapsed: 54.92 seg, req_elapsed: 18.59 seg 
+   output: (C:\Users\aarusr02\AppData\Local\Temp\gradio\d30c1ff66c155fcdbba307f350fc62564bba67a4941e825c815778a655d60590\audio.wav, C:\Users\aarusr02\AppData\Local\Temp\gradio\5377a233f0e59f998d78a70763950af34665b17918ee5a12b274f8066c45d87d\tmp6aibnkm_.png).
+F5TTS[12-112024 21:56:07]: elapsed: 271.98 seg, req_elapsed: 80.80 seg 
+   output: (C:\Users\aarusr02\AppData\Local\Temp\gradio\89ecee2e137fc15ed4213d08e3a922c0cec1fff7f628ed81ab48a0997062ed91\audio.wav, C:\Users\aarusr02\AppData\Local\Temp\gradio\35c8de37be03d88f04e2352583ef9e7c8e81e01e19a7ae492ea839305b6f485e\tmp6mx05cux.png).
