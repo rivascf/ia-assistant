@@ -1,2 +1,0 @@
-F5TTS[08-112024 18:03:23]: elapsed: 14.36 seg, req_elapsed: 7.78 seg 
-   output: (C:\Users\aarusr02\AppData\Local\Temp\gradio\741b8e4cc922a5af477cdf0d6cf6803878fddbd06e8a8bb1dae453105c8a5193\audio.wav, C:\Users\aarusr02\AppData\Local\Temp\gradio\167945a428f5ee2b995c209312a7374d5976cd83b3570f8ba80b6b74b665b9ac\tmpobn10rx5.png).
