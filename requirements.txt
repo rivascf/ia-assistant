@@ -1,3 +1,8 @@
 gradio_client>=1.4.2
 ollama>=0.3.3
 PyAudio
+SpeechRecognition
+numpy
+soundfile
+torch
+whisper
