@@ -22,10 +22,7 @@ class OllamaHandler:
         self.client = ollama.Client()
         self.model = model
         self.detailed_ans = False
-        self.options = {
-            "temperature": temperature
-            #"num_predict": num_predict
-        }
+        self.temperature = temperature
 
     async def generate_chat_response(self, conversation_context, detailed=False):
         flag_change = self.detailed_ans != detailed
@@ -45,7 +42,7 @@ class OllamaHandler:
                 model=self.model,
                 messages=conversation_context,
                 options={
-                    "temperature": 0.8 if detailed else 0.2
+                    "temperature": 0.8 if detailed else 0.1
                 },
                 stream=False
             )

@@ -106,6 +106,11 @@ class VoiceAssistant:
         if prompt:
             if self.__debug_mode:
                 print(f"On DEBUG mode: User's prompt '{prompt}'")
+            if (self.termination_phrase in prompt) and self.chat_mode:
+                if self.__debug_mode:
+                    print(f"On DEBUG mode: On chat mode, termination phrase '{self.termination_phrase}' was detected in prompt... Exiting program.")
+                await self.respond("On chat mode, termination phrase was detected in prompt. Goodbye, have a nice day... Shutting down now.")
+                sys.exit(0)
             self.last_elapse_process_time = time.time()
             self.last_chat_time = time.time()  # Update the last chat interaction time
             self.conversation_context.append({"role": "user", "content": prompt})
@@ -118,7 +123,9 @@ class VoiceAssistant:
 
             if response:
                 self.conversation_context.append(response)
-                await self.respond(response.get("content"))
+                raw_msg = response.get("content").replace("\n\n", "\n").replace("\n", " ").replace("**", "").replace("*", "").strip()
+                # print(f"Assertion: content raw '{raw_msg}'")
+                await self.respond(raw_msg)
             else:
                 if self.__debug_mode:
                     print("On DEBUG mode: No response generated for user's prompt.")
