@@ -12,6 +12,7 @@ Developer: Felipe Rivas
 import logging
 import wave
 import pyaudio
+import asyncio
 from gradio_client import Client, handle_file
 
 
@@ -23,40 +24,35 @@ class F5TTSHandler:
         self.audio_chunk = audio_chunk
         self.__debug_mode = debug
 
-    def synthesize_speech(self, ref_audio, ref_text, generated_text):
+    async def synthesize_speech(self, ref_audio, ref_text, generated_text):
         """Generate audio using F5TTS API."""
         try:
             if self.__debug_mode:
                 print(f"On DEBUG mode, F5TTS [to generate]: '{generated_text}'")
-            return self.client.predict(
-                ref_audio_input=handle_file(ref_audio),
-                ref_text_input=ref_text,
-                gen_text_input=generated_text,
-                remove_silence=False,
-                cross_fade_duration_slider=0.15,
-                speed_slider=1.2,
-                api_name="/basic_tts"
-            )
+            result = await asyncio.to_thread(self.client.predict, ref_audio_input=handle_file(ref_audio), ref_text_input=ref_text, gen_text_input=generated_text, remove_silence=False, cross_fade_duration_slider=0.15, speed_slider=1.2, api_name="/basic_tts")
+            return result
         except Exception as e:
             logging.error(f"Error synthesizing speech with F5TTS: {e}")
             return None
 
-    def play_audio(self, audio_file_path):
+    async def play_audio(self, audio_file_path):
         """Play audio file using PyAudio."""
         try:
-            if self.__debug_mode:
-                print("On DEBUG mode: Playing audio file.")
             with wave.open(audio_file_path, "rb") as audio_file:
                 p = pyaudio.PyAudio()
+                frames = audio_file.getnframes()
+                rate = audio_file.getframerate()
+                if self.__debug_mode:
+                    print(f"On DEBUG mode: Playing audio file {(frames/float(rate)):.2f} secs.")
                 stream = p.open(
                     format=p.get_format_from_width(audio_file.getsampwidth()),
                     channels=audio_file.getnchannels(),
-                    rate=audio_file.getframerate(),
+                    rate=rate,
                     output=True
                 )
                 data = audio_file.readframes(self.audio_chunk)
                 while data:
-                    stream.write(data)
+                    await asyncio.to_thread(stream.write, data)
                     data = audio_file.readframes(self.audio_chunk)
                 stream.stop_stream()
                 stream.close()

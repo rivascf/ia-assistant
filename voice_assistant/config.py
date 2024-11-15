@@ -15,3 +15,4 @@ WAKE_WORD = "assistant"
 WAKE_UP_PHRASE = "hey assistant are you awake"
 TIMEOUT = 60  # In seconds
 TERMINATION_PHRASE = "bye-bye"
+CHAT_MODE_TIMER = 60 # In seconds
