@@ -27,7 +27,7 @@ class VoiceAssistant:
 
     def __init__(self, ref_audio_path, ref_text_input, wake_word=WAKE_WORD, wake_up_phrase=WAKE_UP_PHRASE, timeout=TIMEOUT, termination_phrase=TERMINATION_PHRASE, on_chat_timer=CHAT_MODE_TIMER, debug=False):
         self.recognizer = sr.Recognizer()
-        self.ollama_handler = OllamaHandler(debug=debug)
+        self.ollama_handler = OllamaHandler(temperature=0.2, debug=debug)
         self.f5tts_handler = F5TTSHandler(debug=debug)
         self.ref_audio_path = ref_audio_path
         self.ref_text_input = ref_text_input
@@ -39,7 +39,7 @@ class VoiceAssistant:
         self.chat_mode = False  # Track whether chat mode is active
         self.sleeping = False  # Indicates if assistant is in sleep mode
         self.last_chat_time = None  # Track the last interaction time in chat mode
-        self.conversation_context = []  # Store conversation history for context
+        self.conversation_context = [{"role": "system", "content": "Please provide a concise response."}]  # Store conversation history for context
         self.last_elapse_process_time = 0 # Last time in secs taken to process a user's input get llm model inference, tts inference and, audio playing
         self.__debug_mode = debug
 
@@ -79,7 +79,7 @@ class VoiceAssistant:
                     logging.error(f"Speech recognition service error: {e}")
 
     async def listen_to_user(self):
-        """Capture user's query after activation and convert it to text."""
+        """Async method to capture user input and convert it to text."""
         if self.__debug_mode:
             print("On DEBUG mode: listening user...")
         with sr.Microphone() as source:
@@ -91,7 +91,7 @@ class VoiceAssistant:
                 return None
 
     async def respond(self, text):
-        """Provide synthesized response to the user."""
+        """Asynchronously provides synthesized response to the user."""
         req_start = time.time()
         result = await self.f5tts_handler.synthesize_speech(self.ref_audio_path, self.ref_text_input, text)
         req_stop = time.time()
@@ -101,7 +101,7 @@ class VoiceAssistant:
             await self.f5tts_handler.play_audio(result[0])
 
     async def handle_user_interaction(self):
-        """Generate and speak response based on user's query."""
+        """Async method to generate and speak response based on user's query, supporting 'Elaborate' for detailed responses."""
         prompt = await self.listen_to_user()
         if prompt:
             if self.__debug_mode:
@@ -109,11 +109,16 @@ class VoiceAssistant:
             self.last_elapse_process_time = time.time()
             self.last_chat_time = time.time()  # Update the last chat interaction time
             self.conversation_context.append({"role": "user", "content": prompt})
-            # Get response from Ollama with conversation context
-            response = await self.ollama_handler.generate_response(prompt)
+            # Check for "Elaborate" keyword to determine response detail level
+            if "elaborate" in prompt.lower():
+                # Get response from Ollama with conversation context
+                response = await self.ollama_handler.generate_chat_response(self.conversation_context, detailed=True)
+            else:
+                response = await self.ollama_handler.generate_chat_response(self.conversation_context, detailed=False)
+
             if response:
-                self.conversation_context.append({"role": "assistant", "content": response})
-                await self.respond(response)
+                self.conversation_context.append(response)
+                await self.respond(response.get("content"))
             else:
                 if self.__debug_mode:
                     print("On DEBUG mode: No response generated for user's prompt.")

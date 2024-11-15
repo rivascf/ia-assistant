@@ -38,14 +38,16 @@ class F5TTSHandler:
     async def play_audio(self, audio_file_path):
         """Play audio file using PyAudio."""
         try:
-            if self.__debug_mode:
-                print("On DEBUG mode: Playing audio file.")
             with wave.open(audio_file_path, "rb") as audio_file:
                 p = pyaudio.PyAudio()
+                frames = audio_file.getnframes()
+                rate = audio_file.getframerate()
+                if self.__debug_mode:
+                    print(f"On DEBUG mode: Playing audio file {(frames/float(rate)):.2f} secs.")
                 stream = p.open(
                     format=p.get_format_from_width(audio_file.getsampwidth()),
                     channels=audio_file.getnchannels(),
-                    rate=audio_file.getframerate(),
+                    rate=rate,
                     output=True
                 )
                 data = audio_file.readframes(self.audio_chunk)
