@@ -113,7 +113,7 @@ class VoiceAssistant:
         else:
             await self.respond("Hello, Voice assistant running.")
         while True:
-            trigger = self.listen_for_trigger()
+            trigger = await self.listen_for_trigger()
             if trigger == "wake_word":
                 await self.handle_user_interaction()
             elif trigger == "wake_up_phrase":
