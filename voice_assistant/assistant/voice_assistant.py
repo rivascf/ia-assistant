@@ -18,14 +18,14 @@ import speech_recognition as sr
 from .ollama_handler import OllamaHandler
 from .f5tts_handler import F5TTSHandler
 from voice_assistant.utils.logger import configure_logging
-from voice_assistant.config import WAKE_WORD, WAKE_UP_PHRASE, TERMINATION_PHRASE, TIMEOUT
+from voice_assistant.config import WAKE_WORD, WAKE_UP_PHRASE, TERMINATION_PHRASE, TIMEOUT, CHAT_MODE_TIMER
 
 configure_logging()
 
 class VoiceAssistant:
     """Main assistant class that listens for user input and provides responses."""
 
-    def __init__(self, ref_audio_path, ref_text_input, wake_word=WAKE_WORD, wake_up_phrase=WAKE_UP_PHRASE, timeout=TIMEOUT, termination_phrase=TERMINATION_PHRASE, debug=False):
+    def __init__(self, ref_audio_path, ref_text_input, wake_word=WAKE_WORD, wake_up_phrase=WAKE_UP_PHRASE, timeout=TIMEOUT, termination_phrase=TERMINATION_PHRASE, on_chat_timer=CHAT_MODE_TIMER, debug=False):
         self.recognizer = sr.Recognizer()
         self.ollama_handler = OllamaHandler(debug=debug)
         self.f5tts_handler = F5TTSHandler(debug=debug)
@@ -33,9 +33,14 @@ class VoiceAssistant:
         self.ref_text_input = ref_text_input
         self.wake_word = wake_word.lower()
         self.wake_up_phrase = wake_up_phrase.lower()
+        self.on_chat_timer = on_chat_timer
         self.timeout = timeout
         self.termination_phrase = termination_phrase.lower()
+        self.chat_mode = False  # Track whether chat mode is active
         self.sleeping = False  # Indicates if assistant is in sleep mode
+        self.last_chat_time = None  # Track the last interaction time in chat mode
+        self.conversation_context = []  # Store conversation history for context
+        self.last_elapse_process_time = 0 # Last time in secs taken to process a user's input get llm model inference, tts inference and, audio playing
         self.__debug_mode = debug
 
     async def listen_for_trigger(self):
@@ -56,9 +61,13 @@ class VoiceAssistant:
                         logging.debug(f"On DEBUG: {transcript}")
                     if self.wake_word in transcript and not self.sleeping:
                         await self.respond("How can I assist you?")
+                        self.chat_mode = True
+                        self.last_chat_time = time.time()
                         return "wake_word"
                     elif self.wake_up_phrase in transcript and self.sleeping:
                         self.sleeping = False
+                        self.chat_mode = True
+                        self.last_chat_time = time.time()
                         await self.respond("I'm awake now. How can I assist you?")
                         return "wake_up_phrase"
                     elif self.termination_phrase in transcript:
@@ -96,14 +105,38 @@ class VoiceAssistant:
         prompt = await self.listen_to_user()
         if prompt:
             if self.__debug_mode:
-                print(f"On DEBUG mode: User's prompt '{"In 100 words or less. " + prompt}'")
-            response = await self.ollama_handler.generate_response("In 100 words or less. " + prompt)
+                print(f"On DEBUG mode: User's prompt '{prompt}'")
+            self.last_elapse_process_time = time.time()
+            self.last_chat_time = time.time()  # Update the last chat interaction time
+            self.conversation_context.append({"role": "user", "content": prompt})
+            # Get response from Ollama with conversation context
+            response = await self.ollama_handler.generate_response(prompt)
             if response:
+                self.conversation_context.append({"role": "assistant", "content": response})
                 await self.respond(response)
             else:
                 if self.__debug_mode:
                     print("On DEBUG mode: No response generated for user's prompt.")
                 await self.respond("Sorry, I could not generate a response.")
+
+            self.last_elapse_process_time = time.time() - self.last_elapse_process_time
+            if self.__debug_mode:
+                print(f"On DEBUG mode: Last elapse process time was: {self.last_elapse_process_time:.2f} secs.")
+
+    async def chat_mode_listener(self):
+        """Listens continuously in chat mode until the on_chat_timer elapses."""
+        while self.chat_mode:
+            if (time.time() - self.last_chat_time) > (self.on_chat_timer + self.last_elapse_process_time):
+                # End chat mode and initiate the regular timeout wait
+                self.chat_mode = False
+                self.sleeping = False
+                if self.__debug_mode:
+                    print("On DEBUG mode: Exiting chat mode due to inactivity.")
+                await self.respond("Exiting chat mode due to inactivity. I'll go back to sleep mode if idle.")
+                return
+
+            await self.handle_user_interaction()
+
 
     async def run(self):
         """Runs the assistant in a continuous loop, waiting for triggers and handling interactions."""
@@ -113,9 +146,12 @@ class VoiceAssistant:
         else:
             await self.respond("Hello, Voice assistant running.")
         while True:
-            trigger = await self.listen_for_trigger()
-            if trigger == "wake_word":
-                await self.handle_user_interaction()
-            elif trigger == "wake_up_phrase":
-                logging.info("Resuming from sleep mode. Listening for user input.")
+            if not self.chat_mode:
+                trigger = await self.listen_for_trigger()
+                if trigger in ["wake_word", "wake_up_phrase"]:
+                    if self.__debug_mode:
+                        print(f"On DEBUG mode: VoiceAssistant entering in chat mode, on_chat_timer set to {self.on_chat_timer} secs.")
+                    await self.chat_mode_listener()
+            else:
+                await self.chat_mode_listener()
 
