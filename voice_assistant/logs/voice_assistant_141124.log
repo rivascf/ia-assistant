@@ -1,0 +1,8 @@
+2024-11-14 10:49:15,143 - INFO - HTTP Request: GET http://127.0.0.1:7860/config "HTTP/1.1 200 OK"
+2024-11-14 10:49:15,543 - INFO - HTTP Request: GET http://127.0.0.1:7860/info?serialize=False "HTTP/1.1 200 OK"
+2024-11-14 10:49:16,200 - INFO - HTTP Request: GET http://127.0.0.1:7860/heartbeat/640a25ae-9481-4b8b-833a-60a28cb09f87 "HTTP/1.1 200 OK"
+2024-11-14 10:49:16,258 - INFO - HTTP Request: POST http://127.0.0.1:7860/upload "HTTP/1.1 200 OK"
+2024-11-14 10:49:16,573 - INFO - HTTP Request: POST http://127.0.0.1:7860/queue/join "HTTP/1.1 200 OK"
+2024-11-14 10:49:17,226 - INFO - HTTP Request: GET http://127.0.0.1:7860/queue/data?session_hash=640a25ae-9481-4b8b-833a-60a28cb09f87 "HTTP/1.1 200 OK"
+2024-11-14 10:49:22,802 - INFO - HTTP Request: GET http://127.0.0.1:7860/file=D:\Programas\pinokio\api\e2-f5-tts.git\cache\GRADIO_TEMP_DIR\a170d6370122cd2f8a281d8ad870e366d2810e7424844210aabb9512e119fce8\audio.wav "HTTP/1.1 200 OK"
+2024-11-14 10:49:23,146 - INFO - HTTP Request: GET http://127.0.0.1:7860/file=D:\Programas\pinokio\api\e2-f5-tts.git\cache\GRADIO_TEMP_DIR\cd6d470e6085559cb584c5e4807add8d95fe5196e9c10b00d0f6fa01372a90bf\tmph8ttk4ng.png "HTTP/1.1 200 OK"

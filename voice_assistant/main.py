@@ -10,11 +10,12 @@ Copyright (c) Advanced Robotics Research Group
 Developer: Felipe Rivas
 """
 
+import asyncio
 from assistant.voice_assistant import VoiceAssistant
 from config import REF_AUDIO_PATH, REF_TEXT_INPUT, WAKE_WORD, WAKE_UP_PHRASE, TIMEOUT, TERMINATION_PHRASE
 
-if __name__ == "__main__":
-    # Initialize and run the voice assistant in continuous mode
+async def main():
+    """Main async function to run the assistant."""
     assistant = VoiceAssistant(
         ref_audio_path=REF_AUDIO_PATH,
         ref_text_input=REF_TEXT_INPUT,
@@ -24,4 +25,8 @@ if __name__ == "__main__":
         termination_phrase=TERMINATION_PHRASE,
         debug=True
     )
-    assistant.run()
+    await assistant.run()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

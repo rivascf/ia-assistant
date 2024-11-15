@@ -10,6 +10,7 @@ Copyright (c) Advanced Robotics Research Group
 Developer: Felipe Rivas
 """
 
+import asyncio
 import time
 import sys
 import logging
@@ -37,39 +38,38 @@ class VoiceAssistant:
         self.sleeping = False  # Indicates if assistant is in sleep mode
         self.__debug_mode = debug
 
-    def listen_for_trigger(self):
+    async def listen_for_trigger(self):
         """Listen for wake word, wake-up phrase, or termination phrase to initiate interaction."""
         start_time = time.time()
         with sr.Microphone() as source:
             self.recognizer.adjust_for_ambient_noise(source)
             while True:
                 if not self.sleeping and time.time() - start_time > self.timeout:
-                    self.respond("Entering sleep mode due to inactivity.")
+                    await self.respond("Entering sleep mode due to inactivity.")
                     self.sleeping = True
 
                 try:
                     audio = self.recognizer.listen(source)
-                    #transcript = self.recognizer.recognize_whisper(audio)
                     transcript = self.recognizer.recognize_google(audio).lower()
                     if self.__debug_mode:
                         print(f"On DEBUG: {transcript}")
                         logging.debug(f"On DEBUG: {transcript}")
                     if self.wake_word in transcript and not self.sleeping:
-                        self.respond("How can I assist you?")
+                        await self.respond("How can I assist you?")
                         return "wake_word"
                     elif self.wake_up_phrase in transcript and self.sleeping:
                         self.sleeping = False
-                        self.respond("I'm awake now. How can I assist you?")
+                        await self.respond("I'm awake now. How can I assist you?")
                         return "wake_up_phrase"
                     elif self.termination_phrase in transcript:
-                        self.respond("Goodbye, have a nice day... Shutting down now.")
+                        await self.respond("Goodbye, have a nice day... Shutting down now.")
                         sys.exit(0)
                 except sr.UnknownValueError:
                     pass
                 except sr.RequestError as e:
                     logging.error(f"Speech recognition service error: {e}")
 
-    def listen_to_user(self):
+    async def listen_to_user(self):
         """Capture user's query after activation and convert it to text."""
         if self.__debug_mode:
             print("On DEBUG mode: listening user...")
@@ -78,44 +78,44 @@ class VoiceAssistant:
             try:
                 return self.recognizer.recognize_google(audio_data)
             except sr.UnknownValueError:
-                self.respond("Sorry, I did not understand that.")
+                await self.respond("Sorry, I did not understand that.")
                 return None
 
-    def respond(self, text):
+    async def respond(self, text):
         """Provide synthesized response to the user."""
         req_start = time.time()
-        result = self.f5tts_handler.synthesize_speech(self.ref_audio_path, self.ref_text_input, text)
+        result = await self.f5tts_handler.synthesize_speech(self.ref_audio_path, self.ref_text_input, text)
         req_stop = time.time()
         if result:
             if self.__debug_mode:
                 print(f"On DEBUG mode: Speech Generation elapsed time = '{(req_stop-req_start):.2f} seg.'")
-            self.f5tts_handler.play_audio(result[0])
+            await self.f5tts_handler.play_audio(result[0])
 
-    def handle_user_interaction(self):
+    async def handle_user_interaction(self):
         """Generate and speak response based on user's query."""
-        prompt = self.listen_to_user()
+        prompt = await self.listen_to_user()
         if prompt:
             if self.__debug_mode:
                 print(f"On DEBUG mode: User's prompt '{"In 100 words or less. " + prompt}'")
-            response = self.ollama_handler.generate_response("In 100 words or less. " + prompt)
+            response = await self.ollama_handler.generate_response("In 100 words or less. " + prompt)
             if response:
-                self.respond(response)
+                await self.respond(response)
             else:
                 if self.__debug_mode:
                     print("On DEBUG mode: No response generated for user's prompt.")
-                self.respond("Sorry, I could not generate a response.")
+                await self.respond("Sorry, I could not generate a response.")
 
-    def run(self):
+    async def run(self):
         """Runs the assistant in a continuous loop, waiting for triggers and handling interactions."""
         if self.__debug_mode:
             print("On DEBUG mode: VoiceAssistant running...")
-            self.respond("Hello, Voice assistant running on debug mode.")
+            await self.respond("Hello, Voice assistant running on debug mode.")
         else:
-            self.respond("Hello, Voice assistant running.")
+            await self.respond("Hello, Voice assistant running.")
         while True:
             trigger = self.listen_for_trigger()
             if trigger == "wake_word":
-                self.handle_user_interaction()
+                await self.handle_user_interaction()
             elif trigger == "wake_up_phrase":
                 logging.info("Resuming from sleep mode. Listening for user input.")
 

@@ -11,7 +11,7 @@ Developer: Felipe Rivas
 
 import logging
 import ollama
-
+import asyncio
 
 class OllamaHandler:
     """Manages calls to the Ollama API for generating AI-based responses."""
@@ -26,14 +26,10 @@ class OllamaHandler:
             #"num_predict": num_predict
         }
 
-    def generate_response(self, prompt):
+    async def generate_response(self, prompt):
         """Generate response from Ollama API based on a prompt."""
         try:
-            response = self.client.generate(
-                model=self.model,
-                prompt=prompt,
-                raw=True
-            )
+            response = await asyncio.to_thread(self.client.generate, model=self.model, prompt=prompt, raw=True)
             if self.__debug_mode:
                 print(f"On DEBUG mode, Ollama [{self.model}]: '{response}'")
                 print(f"On DEBUG mode: Ollama stats ['{response.get("created_at")}', '{response.get("total_duration")}']")

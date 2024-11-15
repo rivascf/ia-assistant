@@ -12,6 +12,7 @@ Developer: Felipe Rivas
 import logging
 import wave
 import pyaudio
+import asyncio
 from gradio_client import Client, handle_file
 
 
@@ -23,12 +24,13 @@ class F5TTSHandler:
         self.audio_chunk = audio_chunk
         self.__debug_mode = debug
 
-    def synthesize_speech(self, ref_audio, ref_text, generated_text):
+    async def synthesize_speech(self, ref_audio, ref_text, generated_text):
         """Generate audio using F5TTS API."""
         try:
             if self.__debug_mode:
                 print(f"On DEBUG mode, F5TTS [to generate]: '{generated_text}'")
-            return self.client.predict(
+            result = await asyncio.to_thread(
+                self.client.predict,
                 ref_audio_input=handle_file(ref_audio),
                 ref_text_input=ref_text,
                 gen_text_input=generated_text,
@@ -37,11 +39,12 @@ class F5TTSHandler:
                 speed_slider=1.2,
                 api_name="/basic_tts"
             )
+            return
         except Exception as e:
             logging.error(f"Error synthesizing speech with F5TTS: {e}")
             return None
 
-    def play_audio(self, audio_file_path):
+    async def play_audio(self, audio_file_path):
         """Play audio file using PyAudio."""
         try:
             if self.__debug_mode:
@@ -56,7 +59,7 @@ class F5TTSHandler:
                 )
                 data = audio_file.readframes(self.audio_chunk)
                 while data:
-                    stream.write(data)
+                    await asyncio.to_thread(stream.write, data)
                     data = audio_file.readframes(self.audio_chunk)
                 stream.stop_stream()
                 stream.close()
