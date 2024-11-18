@@ -9,7 +9,7 @@ Copyright (c) Advanced Robotics Research Group
 Developer: Felipe Rivas
 """
 
-REF_AUDIO_PATH = './samples/refaudio_female.mp3'
+REF_AUDIO_PATH = 'samples/viky_female.mp3'
 REF_TEXT_INPUT = "The way you self-analyze, I've always admired it. But at some point, you have to forgive yourself. No one can undo the past."
 WAKE_WORD = "assistant"
 WAKE_UP_PHRASE = "hey assistant are you awake"
