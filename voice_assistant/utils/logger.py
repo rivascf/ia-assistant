@@ -18,7 +18,7 @@ def configure_logging():
     # [DEBUG] [launch]: processing event: '<launch.events.process.process_started.ProcessStarted object at 0x7bee6cf47430>'
     logging.basicConfig(
         filename=f'./logs/voice_assistant_{datetime.datetime.now():%d%m%y}.log',
-        level=logging.DEBUG,
+        level=logging.INFO,
         #format='%(asctime)s - %(levelname)s - %(message)s'
         format='[%(levelname)s] [%(asctime)s]: %(message)s'
     )
