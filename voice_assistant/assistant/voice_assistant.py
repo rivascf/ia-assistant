@@ -26,6 +26,19 @@ class VoiceAssistant:
     """Main assistant class that listens for user input and provides responses."""
 
     def __init__(self, ref_audio_path, ref_text_input, wake_word=WAKE_WORD, wake_up_phrase=WAKE_UP_PHRASE, timeout=TIMEOUT, termination_phrase=TERMINATION_PHRASE, on_chat_timer=CHAT_MODE_TIMER, debug=False):
+        """
+        VoiceAssistant class constructor
+
+        :rtype: object
+        :param ref_audio_path:
+        :param ref_text_input:
+        :param wake_word:
+        :param wake_up_phrase:
+        :param timeout:
+        :param termination_phrase:
+        :param on_chat_timer:
+        :param debug:
+        """
         self.recognizer = sr.Recognizer()
         self.ollama_handler = OllamaHandler(temperature=0.2, debug=debug)
         self.f5tts_handler = F5TTSHandler(debug=debug)

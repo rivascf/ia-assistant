@@ -29,7 +29,16 @@ class F5TTSHandler:
         try:
             if self.__debug_mode:
                 print(f"On DEBUG mode, F5TTS [to generate]: '{generated_text}'")
-            result = await asyncio.to_thread(self.client.predict, ref_audio_input=handle_file(ref_audio), ref_text_input=ref_text, gen_text_input=generated_text, remove_silence=False, cross_fade_duration_slider=0.15, speed_slider=1.2, api_name="/basic_tts")
+            result = await asyncio.to_thread(
+                self.client.predict,
+                ref_audio_input=handle_file(ref_audio),
+                ref_text_input=ref_text,
+                gen_text_input=generated_text,
+                remove_silence=False,
+                cross_fade_duration_slider= 0.15, # 0.12 (viky),     #0.15,
+                speed_slider=1.0, # 1.1 (viky),       #1.2,
+                api_name="/basic_tts"
+            )
             return result
         except Exception as e:
             logging.error(f"Error synthesizing speech with F5TTS: {e}")
