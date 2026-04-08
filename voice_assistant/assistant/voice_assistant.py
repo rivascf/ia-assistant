@@ -40,7 +40,7 @@ class VoiceAssistant:
         :param debug:
         """
         self.recognizer = sr.Recognizer()
-        self.ollama_handler = OllamaHandler(temperature=0.2, debug=debug)
+        self.ollama_handler = OllamaHandler(model="gpt-oss",  debug=debug) # temperature=0.2,
         self.f5tts_handler = F5TTSHandler(debug=debug)
         self.ref_audio_path = ref_audio_path
         self.ref_text_input = ref_text_input

@@ -9,9 +9,10 @@ Copyright (c) Advanced Robotics Research Group
 Developer: Felipe Rivas
 """
 
-REF_AUDIO_PATH = 'samples/erin_female.mp3' # 'samples/viky_female.mp3'
-REF_TEXT_INPUT = "We are on interesting ground. You were remade in a lab like this. The technique is suppose to be lost. "
-# (viky) REF_TEXT_INPUT = "The way you self-analyze, I've always admired it. But at some point, you have to forgive yourself. No one can undo the past."
+# (Erin) REF_AUDIO_PATH = 'samples/erin_female.mp3' # 'samples/viky_female.mp3'
+REF_AUDIO_PATH = 'samples/viky_female.mp3' # (Viky)
+# (Erin) REF_TEXT_INPUT = "We are on interesting ground. You were remade in a lab like this. The technique is suppose to be lost. "
+REF_TEXT_INPUT = "The way you self-analyze, I've always admired it. But at some point, you have to forgive yourself. No one can undo the past." # (Viky)
 WAKE_WORD = "assistant"
 WAKE_UP_PHRASE = "hey assistant are you awake"
 TIMEOUT = 60  # In seconds
